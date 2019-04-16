@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_INT 2147483647
+
+struct Node 
+{
+	struct Node *left, *right;
+	int key;
+};
+
+struct Node* CreateNode(int key)
+{
+	struct Node *newNode = (struct Node*)malloc(sizeof(struct Node));
+	newNode->key = key;
+	newNode->left = newNode->right = NULL;
+	return newNode;
+}
+
+struct Node* insert(struct Node *root, int value)
+{
+	if (root == NULL)
+	{
+		root = CreateNode(value);
+	}
+	else if (value <= root->key)
+	{
+		root->left = insert(root->left, value);
+	}
+	else
+		root->right = insert(root->right, value);
+	return root;
+}
+
+void  print(struct  Node  *root) 
+{ 
+	if (root != NULL) 
+	{ 
+		printf("\n  %i", root->key); 
+		print(root->left);
+		print(root->right);
+	} 
+}
+
+int findMaxValue(struct Node *root)  //func searches for max value in tree/subtree
+{
+	int maxValue = root->key;
+	int leftCandidate = -1, rightCandidate = -1;
+	if (root->left != NULL) 
+		leftCandidate = findMaxValue(root->left);
+	if (root->right != NULL)
+		rightCandidate = findMaxValue(root->right);
+	if (leftCandidate > maxValue)
+		maxValue = leftCandidate;
+	if (rightCandidate > maxValue)
+		maxValue = rightCandidate;
+		return maxValue;
+}
+
+int findMinValue(struct Node *root)  //func searches for min value in tree/subtree
+{
+	int minValue = root->key;
+	int leftCandidate = MAX_INT, rightCandidate = MAX_INT;
+	if (root->left != NULL)
+		leftCandidate = findMinValue(root->left);
+	if (root->right != NULL)
+		rightCandidate = findMinValue(root->right);
+	if (leftCandidate < minValue)
+		minValue = leftCandidate;
+	if (rightCandidate < minValue)
+		minValue = rightCandidate;
+	return minValue;
+}
+
+int isItBST(struct Node *root)
+{
+	if (root == NULL)
+		return 1;
+	if ((root->left != NULL) && (root->key < findMaxValue(root->left)))
+		return 0;
+	if ((root->right != NULL) && (root->key > findMinValue(root->right)))
+		return 0;
+	if ((isItBST(root->left) == 0 ) || (isItBST(root->right) == 0))
+		return 0;
+	return 1;
+}
